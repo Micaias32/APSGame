@@ -13,6 +13,7 @@ public class DialogScreen implements Screen {
 
     FitViewport viewport;
     SpriteBatch spriteBatch;
+    float d;
 
     @Override
     public void show() {
@@ -37,7 +38,7 @@ public class DialogScreen implements Screen {
     }
 
     private void logic(float delta) {
-        System.out.println(delta);
+        d = delta;
     }
 
     private void draw() {
