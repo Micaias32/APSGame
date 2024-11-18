@@ -1,8 +1,13 @@
 package ifpb.game;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.GlyphLayout;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -13,14 +18,33 @@ public class DialogScreen implements Screen {
 
     FitViewport viewport;
     SpriteBatch spriteBatch;
+    ShapeRenderer shapeRenderer;
+    BitmapFont textFont;
     float d;
 
-    @Override
-    public void show() {
-        // Prepare your screen here.
+    Rectangle dialogBox;
 
+    @Override
+    public void show() { // Prepare your screen here.
         viewport = new FitViewport(160, 90);
+        shapeRenderer = new ShapeRenderer();
         spriteBatch = new SpriteBatch();
+
+        dialogBox = new Rectangle(
+            0f, 0f,
+            viewport.getWorldWidth(),
+            viewport.getWorldHeight() * .4f
+        );
+        System.out.println(viewport.getWorldWidth());
+        System.out.println(viewport.getWorldHeight());
+
+        textFont = new BitmapFont(Gdx.files.internal("main.fnt"));
+        textFont.setColor(Color.BLACK);
+
+
+        textFont.setUseIntegerPositions(false);
+        textFont.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
+
 
     }
 
@@ -45,7 +69,26 @@ public class DialogScreen implements Screen {
         ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
+
+        shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled); // Use ShapeType.Filled for a filled rectangle
+        shapeRenderer.setColor(Color.WHITE); // Or any color you prefer
+        shapeRenderer.rect(dialogBox.x, dialogBox.y, dialogBox.width, dialogBox.height);
+        shapeRenderer.end();
+
         spriteBatch.begin();
+
+        // Text to render
+        String text = "Ola!";
+        GlyphLayout layout = new GlyphLayout(textFont, text);
+        float textWidth = layout.width;
+        float textHeight = layout.height;
+
+        // Center the text inside the rectangle
+        float textX = dialogBox.x + dialogBox.width / 2 - textWidth / 2;
+        float textY = dialogBox.y + dialogBox.height / 2 + textHeight / 2;
+
+        textFont.draw(spriteBatch, text, textX, textY);
 
         spriteBatch.end();
     }
@@ -74,5 +117,8 @@ public class DialogScreen implements Screen {
     @Override
     public void dispose() {
         // Destroy screen's assets here.
+        spriteBatch.dispose();
+        textFont.dispose();
+
     }
 }
