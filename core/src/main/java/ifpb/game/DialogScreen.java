@@ -1,18 +1,22 @@
 package ifpb.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.GlyphLayout;
+import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 /**
- * First screen of the application. Displayed after the application is created.
+ * Dialog Screen. When something is being talked, it is here that it is talked.
  */
 public class DialogScreen implements Screen {
 
@@ -20,8 +24,12 @@ public class DialogScreen implements Screen {
     SpriteBatch spriteBatch;
     ShapeRenderer shapeRenderer;
     BitmapFont textFont;
-    float d;
+    DialogState dialogState;
+    String name;
+    String dialog;
+    DialogContent dialogContent;
 
+    Person person;
     Rectangle dialogBox;
 
     @Override
@@ -38,14 +46,38 @@ public class DialogScreen implements Screen {
         System.out.println(viewport.getWorldWidth());
         System.out.println(viewport.getWorldHeight());
 
-        textFont = new BitmapFont(Gdx.files.internal("main.fnt"));
+        FreeTypeFontGenerator ttf = new FreeTypeFontGenerator(Gdx.files.internal("main.ttf"));
+        ttf.scaleForPixelHeight(10);
+        FreeTypeFontGenerator.FreeTypeFontParameter ttfParam = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        ttfParam.size = 40;
+        textFont = ttf.generateFont(ttfParam);
         textFont.setColor(Color.BLACK);
 
+        dialogContent = new DialogContent(
+            new String[]{
+                "Actor 1",
+                "Actor 2",
+            }, new Speech[]{
+            new Speech("Actor 1", "Hello"),
+            new Speech("Actor 2", "Hello there"),
+        });
 
         textFont.setUseIntegerPositions(false);
         textFont.getData().setScale(viewport.getWorldHeight() / Gdx.graphics.getHeight());
 
+        Speech speech = dialogContent.next().orElseThrow();
 
+        name = speech.getTalking();
+        dialog = speech.getTalked();
+
+        person = new Person(
+            "Actor 1",
+            new Sprite(
+                new Texture(
+                    Gdx.files.internal("alfred.png")
+                )
+            )
+        );
     }
 
     @Override
@@ -58,11 +90,19 @@ public class DialogScreen implements Screen {
     }
 
     private void input() {
-
+        if (Gdx.input.isKeyPressed(Input.Keys.SPACE)
+            && dialogState != DialogState.ON_TRANSITION) {
+            dialogState = DialogState.SHOULD_BE_TRANSITIONED;
+        }
     }
 
     private void logic(float delta) {
-        d = delta;
+
+        if (dialogState == DialogState.SHOULD_BE_TRANSITIONED) {
+            person.littleJump();
+        }
+
+        person.update(delta);
     }
 
     private void draw() {
@@ -78,9 +118,18 @@ public class DialogScreen implements Screen {
 
         spriteBatch.begin();
 
+
+        this.renderText(spriteBatch);
+
+        person.render(spriteBatch);
+
+
+        spriteBatch.end();
+    }
+
+    private void renderText(SpriteBatch spriteBatch) {
         // Text to render
-        String text = "Ola!";
-        GlyphLayout layout = new GlyphLayout(textFont, text);
+        GlyphLayout layout = new GlyphLayout(textFont, name);
         float textWidth = layout.width;
         float textHeight = layout.height;
 
@@ -88,9 +137,8 @@ public class DialogScreen implements Screen {
         float textX = dialogBox.x + dialogBox.width / 2 - textWidth / 2;
         float textY = dialogBox.y + dialogBox.height / 2 + textHeight / 2;
 
-        textFont.draw(spriteBatch, text, textX, textY);
+        textFont.draw(spriteBatch, name, textX, textY);
 
-        spriteBatch.end();
     }
 
     @Override
@@ -119,6 +167,7 @@ public class DialogScreen implements Screen {
         // Destroy screen's assets here.
         spriteBatch.dispose();
         textFont.dispose();
+        person.dispose();
 
     }
 }
