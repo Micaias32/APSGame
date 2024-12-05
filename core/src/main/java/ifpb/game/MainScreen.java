@@ -1,8 +1,6 @@
 package ifpb.game;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
@@ -11,12 +9,11 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 /**
  * First screen of the application. Displayed after the application is created.
  */
-public class DialogScreen implements Screen {
+public class MainScreen implements Screen {
 
     FitViewport viewport;
     SpriteBatch spriteBatch;
     float d;
-    Music music;
     Dude dude;
 
     @Override
@@ -26,12 +23,13 @@ public class DialogScreen implements Screen {
         viewport = new FitViewport(160, 90);
         spriteBatch = new SpriteBatch();
 
-        dude = new Dude("Borrachinha", true);
+        dude = new Dude("Borrachinha", false);
+        dude.setScale(0.5f);
+        dude.doToSprites(sprite -> {
+            sprite.setCenterX(80);
+            sprite.setCenterY(45);
+        });
 
-        music = Gdx.audio.newMusic(Gdx.files.internal("borrachinhaRica/stayin.mp3"));
-
-        music.setLooping(true);
-        music.setVolume(.5f);
     }
 
     @Override
@@ -42,7 +40,6 @@ public class DialogScreen implements Screen {
         draw();
 
     }
-    //    b    b    b    b    a
 
     private void input() {
 
@@ -50,20 +47,11 @@ public class DialogScreen implements Screen {
 
     private void logic(float delta) {
         d += delta;
-        float barDuration = (4 * 60) / 104f;
-        float elapsedTime = d;
-        float phase = (elapsedTime % barDuration) / barDuration;
-        float angle = (float) (phase * 2 * Math.PI);
-//        System.out.println(angle);
-
-        dude.doToSprites(sprite -> sprite.setScale((float) Math.sin((angle)) * .5f));
-        dude.doToSprites(sprite -> sprite.translateX((float) Math.sin(angle)));
-        dude.doToSprites(sprite -> sprite.translateY((float) Math.cos(angle)));
-        music.play();
+        dude.doPhysics(d);
     }
 
     private void draw() {
-        ScreenUtils.clear(Color.GRAY);
+        ScreenUtils.clear(new Color(.2f, .2f, .2f, 1f));
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         spriteBatch.begin();
