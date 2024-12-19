@@ -16,6 +16,7 @@ public class Dude {
     private OrderedMap<String, Sprite> sprites;
 
     private boolean isBlinking;
+    private float timeBlinking;
 
     public Dude(@NotNull String name, boolean isOC) {
         this.name = name;
@@ -47,6 +48,7 @@ public class Dude {
             sprite.setScale(scaleFactor);
             sprite.setX(80);
         });
+        timeBlinking = -5f;
     }
 
     public void doToSpritesFiltered(@NotNull String filter, @NotNull Consumer<Sprite> consumer) {
@@ -57,6 +59,9 @@ public class Dude {
             sprites.add("eyes");
             sprites.add("pupils");
             sprites.add("mouth");
+        } else if (filter.equals("eyes")) {
+            sprites.add("eyes");
+            sprites.add("pupils");
         }
 
         for (String s : sprites) {
@@ -64,8 +69,27 @@ public class Dude {
         }
     }
 
-    public void doPhysics(float time) {
+    public void doPhysics(float time, float delta) {
         doToSpritesFiltered("head", sprite -> sprite.setY((float) Math.sin(time * 2.5f) / 2 - 42.5f / 2f));
+        updateBlinking(delta);
+        timeBlinking %= 5;
+    }
+
+    private void blink() {
+
+    }
+
+    private void updateBlinking(float time) {
+        timeBlinking += time;
+        float amount = 1 - MathUtils.blinkingFunction(timeBlinking);
+        float spriteHeight = sprites.get("eyes").getHeight();
+        int height = (int) (spriteHeight * amount);
+        doToSpritesFiltered("eyes", sprite -> {
+            int x = sprite.getRegionX();
+            int y = sprite.getRegionY();
+            int width = sprite.getRegionWidth();
+            sprite.setRegion(x, y, width, height);
+        });
     }
 
     public void render(@NotNull SpriteBatch spriteBatch) {

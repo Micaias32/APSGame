@@ -47,7 +47,7 @@ public class MainScreen implements Screen {
 
     private void logic(float delta) {
         d += delta;
-        dude.doPhysics(d);
+        dude.doPhysics(d, delta);
     }
 
     private void draw() {
