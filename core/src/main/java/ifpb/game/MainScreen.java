@@ -150,5 +150,9 @@ public class MainScreen implements Screen {
     @Override
     public void dispose() {
         // Destroy screen's assets here.
+        energyBar.dispose();
+        happinessBar.dispose();
+        hungerBar.dispose();
+        dude.doToSprites(sprite -> sprite.getTexture().dispose());
     }
 }
