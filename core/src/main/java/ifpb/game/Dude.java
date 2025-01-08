@@ -11,7 +11,8 @@ import java.util.function.Consumer;
 
 public class Dude {
     public static final float scaleFactor = .5f;
-    private int hunger, happiness, energy;
+    public static final float moveFactor = 3;
+    private float hunger, happiness, energy;
     private String name;
     private OrderedMap<String, Sprite> sprites;
 
@@ -20,9 +21,9 @@ public class Dude {
 
     public Dude(@NotNull String name, boolean isOC) {
         this.name = name;
-        hunger = 50;
-        happiness = 75;
-        energy = 90;
+        hunger = .50f;
+        happiness = .75f;
+        energy = .90f;
         isBlinking = true;
 
         sprites = new OrderedMap<>();
@@ -108,15 +109,15 @@ public class Dude {
         doToSprites(sprite -> sprite.setScale(scaleFactor));
     }
 
-    public int getHunger() {
+    public float getHunger() {
         return hunger;
     }
 
-    public int getHappiness() {
+    public float getHappiness() {
         return happiness;
     }
 
-    public int getEnergy() {
+    public float getEnergy() {
         return energy;
     }
 
