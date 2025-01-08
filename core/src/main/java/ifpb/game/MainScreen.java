@@ -21,6 +21,7 @@ public class MainScreen implements Screen {
     FitViewport viewport;
     SpriteBatch spriteBatch;
     ShapeRenderer shapeRenderer;
+
     float d;
     Dude dude;
     Bar energyBar;
