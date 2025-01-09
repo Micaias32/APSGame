@@ -1,6 +1,7 @@
 package ifpb.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -96,7 +97,11 @@ public class MainScreen implements Screen {
         } else {
             wasTouched = false;
         }
-
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            dude.doToSpritesFiltered("body_blue", sprite -> {
+                sprite.setColor(Color.BROWN);
+            });
+        }
     }
 
     private void logic(float delta) {

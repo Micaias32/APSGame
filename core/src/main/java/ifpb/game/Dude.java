@@ -55,14 +55,21 @@ public class Dude {
     public void doToSpritesFiltered(@NotNull String filter, @NotNull Consumer<Sprite> consumer) {
         ArrayList<String> sprites = new ArrayList<>();
 
-        if (filter.equals("head")) {
-            sprites.add("head");
-            sprites.add("eyes");
-            sprites.add("pupils");
-            sprites.add("mouth");
-        } else if (filter.equals("eyes")) {
-            sprites.add("eyes");
-            sprites.add("pupils");
+        switch (filter) {
+            case "head" -> {
+                sprites.add("head");
+                sprites.add("eyes");
+                sprites.add("pupils");
+                sprites.add("mouth");
+            }
+            case "eyes" -> {
+                sprites.add("eyes");
+                sprites.add("pupils");
+            }
+            case "body_blue" -> {
+                sprites.add("body");
+                sprites.add("head");
+            }
         }
 
         for (String s : sprites) {
@@ -101,8 +108,6 @@ public class Dude {
         for (var sprite : sprites.values()) {
             consumer.accept(sprite);
         }
-
-
     }
 
     public void setScale(float scaleFactor) {
