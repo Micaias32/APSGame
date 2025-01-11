@@ -12,6 +12,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
+import static ifpb.game.FoodBar.FOOD_BOUNDS;
+
 /**
  * First screen of the application. Displayed after the application is created.
  */
@@ -28,6 +30,8 @@ public class MainScreen implements Screen {
     Bar energyBar;
     Bar hungerBar;
     Bar happinessBar;
+    FoodBar foodBar;
+    Food holdingFood;
 
 
     @Override
@@ -71,6 +75,7 @@ public class MainScreen implements Screen {
             .withIcon(new Sprite(new Texture("mainScreen/hunger.png")))
             .build();
 
+        foodBar = new FoodBar();
     }
 
     @Override
@@ -85,10 +90,16 @@ public class MainScreen implements Screen {
     Vector2 dragPos, endPos;
     boolean wasTouched = false;
     private void input() {
+
         if (Gdx.input.justTouched()) {
             wasTouched = true;
             dragPos = endPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
             System.out.printf("x: %.1f, y: %.1f\n", dragPos.x, dragPos.y);
+
+            if (FOOD_BOUNDS.contains(viewport.unproject(dragPos))) {
+                System.out.println("Hey");
+            }
+
         } else if (Gdx.input.isTouched()) {
             endPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
         } else if (wasTouched && !Gdx.input.isTouched()) {
@@ -100,7 +111,7 @@ public class MainScreen implements Screen {
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
             dude.doToSpritesFiltered("body_blue", sprite -> {
-                sprite.setColor(Color.BROWN);
+                sprite.setColor(Color.RED);
             });
         }
     }
@@ -127,6 +138,7 @@ public class MainScreen implements Screen {
         energyBar.render(shapeRenderer, spriteBatch);
         happinessBar.render(shapeRenderer, spriteBatch);
         hungerBar.render(shapeRenderer, spriteBatch);
+        foodBar.render(spriteBatch);
 
         spriteBatch.end();
         shapeRenderer.end();
