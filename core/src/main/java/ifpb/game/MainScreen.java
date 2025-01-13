@@ -1,7 +1,6 @@
 package ifpb.game;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -9,6 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -31,7 +31,9 @@ public class MainScreen implements Screen {
     Bar hungerBar;
     Bar happinessBar;
     FoodBar foodBar;
-    Food holdingFood;
+    Sprite heldFood;
+
+    HoldingState holdingState;
 
 
     @Override
@@ -76,6 +78,10 @@ public class MainScreen implements Screen {
             .build();
 
         foodBar = new FoodBar();
+        holdingState = HoldingState.NOT_HOLDING;
+
+        dragPos = new Vector2();
+        endPos = new Vector2();
     }
 
     @Override
@@ -88,41 +94,52 @@ public class MainScreen implements Screen {
     }
 
     Vector2 dragPos, endPos;
-    boolean wasTouched = false;
     private void input() {
-
+        Vector2 cursorPos = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         if (Gdx.input.justTouched()) {
-            wasTouched = true;
-            dragPos = endPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-            System.out.printf("x: %.1f, y: %.1f\n", dragPos.x, dragPos.y);
-
-            if (FOOD_BOUNDS.contains(viewport.unproject(dragPos))) {
-                System.out.println("Hey");
+            dragPos = cursorPos;
+            if (FOOD_BOUNDS.contains(dragPos)) {
+                holdingState = HoldingState.IS_HOLDING_FOOD;
+            } else {
+                holdingState = HoldingState.IS_HOLDING;
             }
-
-        } else if (Gdx.input.isTouched()) {
-            endPos = new Vector2(Gdx.input.getX(), Gdx.input.getY());
-        } else if (wasTouched && !Gdx.input.isTouched()) {
-            System.out.printf("dragging before; x: %.1f, y: %.1f\n", dragPos.x, dragPos.y);
-            System.out.printf("dragging end; x: %.1f, y: %.1f\n", endPos.x, endPos.y);
-            wasTouched = false;
-        } else {
-            wasTouched = false;
+            return;
         }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            dude.doToSpritesFiltered("body_blue", sprite -> {
-                sprite.setColor(Color.RED);
-            });
+        if (Gdx.input.isTouched()) {
+            endPos = cursorPos;
+        } else if (holdingState != HoldingState.STOPPED_HOLDING && holdingState != HoldingState.NOT_HOLDING){
+            holdingState = HoldingState.STOPPED_HOLDING;
+            return;
+        }
+        if (holdingState == HoldingState.STOPPED_HOLDING) {
+            holdingState = HoldingState.NOT_HOLDING;
+            System.out.printf("begin { x: %.2f, y: %.2f }\n", dragPos.x, dragPos.y);
+            System.out.printf("end   { x: %.2f, y: %.2f }\n\n", endPos.x, endPos.y);
         }
     }
 
     private void logic(float delta) {
         d += delta;
         dude.doPhysics(d, delta);
+        handleFood();
 
         energyBar.setValue(dude.getEnergy());
         happinessBar.setValue(dude.getHappiness());
         hungerBar.setValue(dude.getHunger());
+    }
+
+    private void handleFood() {
+        Food foodRn = foodBar.getFood();
+        if (holdingState == HoldingState.IS_HOLDING_FOOD) {
+            heldFood = new Sprite(foodRn.sprite);
+            heldFood.setCenter(endPos.x, endPos.y);
+        } else if (holdingState == HoldingState.STOPPED_HOLDING) {
+            if (dude.getBoundingBox().contains(endPos)) {
+                dude.consumeFood(foodRn);
+            }
+            heldFood = null;
+            endPos = FOOD_BOUNDS.getCenter(dragPos);
+        }
     }
 
     private void draw() {
@@ -139,6 +156,10 @@ public class MainScreen implements Screen {
         happinessBar.render(shapeRenderer, spriteBatch);
         hungerBar.render(shapeRenderer, spriteBatch);
         foodBar.render(spriteBatch);
+
+        if (heldFood != null) {
+            heldFood.draw(spriteBatch);
+        }
 
         spriteBatch.end();
         shapeRenderer.end();

@@ -55,6 +55,10 @@ public class FoodBar {
         return food;
     }
 
+    public Food getFood() {
+        return foods.get(index);
+    }
+
 
     void render(SpriteBatch spriteBatch) {
         foods.get(index).sprite.draw(spriteBatch);

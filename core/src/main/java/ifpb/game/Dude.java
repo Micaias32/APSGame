@@ -3,6 +3,7 @@ package ifpb.game;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.OrderedMap;
 import org.jetbrains.annotations.NotNull;
 
@@ -130,4 +131,13 @@ public class Dude {
         return name;
     }
 
+    public void consumeFood(@NotNull Food food) {
+        this.energy = Math.min(this.getEnergy() + food.energyLevel, 1.0f);
+        this.happiness = Math.min(this.getHappiness() + food.happinessLevel, 1.0f);
+        this.hunger = Math.min(this.getHunger()+food.hungerLevel, 1.0f);
+    }
+
+    public Rectangle getBoundingBox() {
+        return sprites.get("head").getBoundingRectangle();
+    }
 }
