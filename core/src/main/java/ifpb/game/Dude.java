@@ -106,6 +106,7 @@ public class Dude {
     }
 
     public void doToSprites(@NotNull Consumer<Sprite> consumer) {
+
         for (var sprite : sprites.values()) {
             consumer.accept(sprite);
         }

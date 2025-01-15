@@ -107,11 +107,17 @@ public class MainScreen implements Screen {
         }
         if (Gdx.input.isTouched()) {
             endPos = cursorPos;
-        } else if (holdingState != HoldingState.STOPPED_HOLDING && holdingState != HoldingState.NOT_HOLDING){
-            holdingState = HoldingState.STOPPED_HOLDING;
+        } else if (holdingState != HoldingState.STOPPED_HOLDING && holdingState != HoldingState.NOT_HOLDING && holdingState != HoldingState.STOPPED_HOLDING_FOOD){
+            if (holdingState == HoldingState.IS_HOLDING_FOOD) {
+                holdingState = HoldingState.STOPPED_HOLDING_FOOD;
+            } else {
+                holdingState = HoldingState.STOPPED_HOLDING;
+            }
+
             return;
         }
-        if (holdingState == HoldingState.STOPPED_HOLDING) {
+        if (holdingState == HoldingState.STOPPED_HOLDING || holdingState == HoldingState.STOPPED_HOLDING_FOOD) {
+
             holdingState = HoldingState.NOT_HOLDING;
             System.out.printf("begin { x: %.2f, y: %.2f }\n", dragPos.x, dragPos.y);
             System.out.printf("end   { x: %.2f, y: %.2f }\n\n", endPos.x, endPos.y);
@@ -133,7 +139,7 @@ public class MainScreen implements Screen {
         if (holdingState == HoldingState.IS_HOLDING_FOOD) {
             heldFood = new Sprite(foodRn.sprite);
             heldFood.setCenter(endPos.x, endPos.y);
-        } else if (holdingState == HoldingState.STOPPED_HOLDING) {
+        } else if (holdingState == HoldingState.STOPPED_HOLDING_FOOD) {
             if (dude.getBoundingBox().contains(endPos)) {
                 dude.consumeFood(foodRn);
             }

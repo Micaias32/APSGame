@@ -5,4 +5,5 @@ public enum HoldingState {
     IS_HOLDING,
     IS_HOLDING_FOOD,
     STOPPED_HOLDING,
+    STOPPED_HOLDING_FOOD,
 }
