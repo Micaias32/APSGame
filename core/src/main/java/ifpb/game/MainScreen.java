@@ -1,6 +1,7 @@
 package ifpb.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -116,6 +117,10 @@ public class MainScreen implements Screen {
             System.out.printf("begin { x: %.2f, y: %.2f }\n", dragPos.x, dragPos.y);
             System.out.printf("end   { x: %.2f, y: %.2f }\n\n", endPos.x, endPos.y);
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            dude.doToSpritesFiltered("body_blue", sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, 1));
+        }
     }
 
     private void logic(float delta) {
@@ -126,6 +131,8 @@ public class MainScreen implements Screen {
         energyBar.setValue(dude.getEnergy());
         happinessBar.setValue(dude.getHappiness());
         hungerBar.setValue(dude.getHunger());
+
+        dude.doToSpritesFiltered("body_blue", sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, MathUtils.colorFunction(d%4)));
     }
 
     private void handleFood() {
@@ -143,7 +150,8 @@ public class MainScreen implements Screen {
     }
 
     private void draw() {
-        ScreenUtils.clear(new Color(.2f, .2f, .2f, 1f));
+//        ScreenUtils.clear(new Color(.2f, .2f, .2f, 1f));
+        ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);

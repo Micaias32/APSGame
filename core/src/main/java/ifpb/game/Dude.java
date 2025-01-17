@@ -39,8 +39,8 @@ public class Dude {
             sprites.put("eyelid", new Sprite(new Texture("borrachinhaRica/palpebra.png")));
         } else {
             sprites.put("legs", new Sprite(new Texture("character/legs.png")));
-            sprites.put("body", new Sprite(new Texture("character/body.png")));
-            sprites.put("head", new Sprite(new Texture("character/head.png")));
+            sprites.put("body", new Sprite(new Texture("character/nocolor/body.png")));
+            sprites.put("head", new Sprite(new Texture("character/nocolor/head.png")));
             sprites.put("eyes", new Sprite(new Texture("character/eyes.png")));
             sprites.put("pupils", new Sprite(new Texture("character/pupils.png")));
             sprites.put("mouth", new Sprite(new Texture("character/mouth.png")));
@@ -50,6 +50,7 @@ public class Dude {
             sprite.setScale(scaleFactor);
             sprite.setX(80);
         });
+        doToSpritesFiltered("body_blue", sprite -> sprite.setColor(15/255f, 220/255f, 223/255f, 1));
         timeBlinking = -5f;
     }
 
@@ -135,6 +136,7 @@ public class Dude {
         this.energy = Math.min(this.getEnergy() + food.energyLevel, 1.0f);
         this.happiness = Math.min(this.getHappiness() + food.happinessLevel, 1.0f);
         this.hunger = Math.min(this.getHunger()+food.hungerLevel, 1.0f);
+        doToSpritesFiltered("body_blue", sprite -> sprite.setColor(food.color));
     }
 
     public Rectangle getBoundingBox() {
