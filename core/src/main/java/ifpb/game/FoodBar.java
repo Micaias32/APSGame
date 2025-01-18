@@ -33,7 +33,8 @@ public class FoodBar {
             .10f,
             .10f,
             .10f,
-            Color.valueOf("FF3627")
+//            Color.valueOf("FF3627")
+            Color.PINK
         ));
         foods.get(0).sprite.setPosition(
             FOOD_BOUNDS.x,

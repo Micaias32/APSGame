@@ -9,7 +9,6 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Null;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
@@ -45,12 +44,9 @@ public class MainScreen implements Screen {
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
 
-        dude = new Dude("Borrachinha", false);
+        dude = new Dude();
         dude.setScale(0.5f);
-        dude.doToSprites(sprite -> {
-            sprite.setCenterX(80);
-            sprite.setCenterY(45);
-        });
+        dude.holiSprite.doToChildren(sprite -> sprite.setCenter(80, 45));
 
         Vector2 barPos = new Vector2(1, 80);
         Vector2 barSize = new Vector2(20, 5);
@@ -119,7 +115,11 @@ public class MainScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            dude.doToSpritesFiltered("body_blue", sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, 1));
+            dude.holiSprite.doToChildren(sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, 1));
+        }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
+            dude.holiSprite.get("head").get("mouth").setTexture(new Texture("character/mouth_neutral.png"));
         }
     }
 
@@ -132,7 +132,7 @@ public class MainScreen implements Screen {
         happinessBar.setValue(dude.getHappiness());
         hungerBar.setValue(dude.getHunger());
 
-        dude.doToSpritesFiltered("body_blue", sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, MathUtils.colorFunction(d%4)));
+//        dude.holiSprite.doToChildren(sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, MathUtils.colorFunction(d%5)));
     }
 
     private void handleFood() {
@@ -150,8 +150,8 @@ public class MainScreen implements Screen {
     }
 
     private void draw() {
-//        ScreenUtils.clear(new Color(.2f, .2f, .2f, 1f));
-        ScreenUtils.clear(Color.BLACK);
+        ScreenUtils.clear(new Color(.2f, .2f, .2f, 1f));
+//        ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
@@ -200,6 +200,6 @@ public class MainScreen implements Screen {
         energyBar.dispose();
         happinessBar.dispose();
         hungerBar.dispose();
-        dude.doToSprites(sprite -> sprite.getTexture().dispose());
+        dude.holiSprite.doToChildren(sprite -> sprite.getTexture().dispose());
     }
 }
