@@ -32,6 +32,8 @@ public class MainScreen implements Screen {
     Bar happinessBar;
     FoodBar foodBar;
     Sprite heldFood;
+    Lamp lamp;
+    boolean sleeping = false;
 
     HoldingState holdingState;
 
@@ -79,6 +81,8 @@ public class MainScreen implements Screen {
 
         dragPos = new Vector2();
         endPos = new Vector2();
+
+        this.lamp = new Lamp(WORLD_WIDTH/2, WORLD_HEIGHT, 2);
     }
 
     @Override
@@ -92,6 +96,9 @@ public class MainScreen implements Screen {
 
     Vector2 dragPos, endPos;
     private void input() {
+        if (sleeping)
+            return;
+
         Vector2 cursorPos = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         if (Gdx.input.justTouched()) {
             dragPos = cursorPos;
@@ -115,11 +122,16 @@ public class MainScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            dude.holiSprite.doToChildren(sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, 1));
+            dude.changeColor(Color.valueOf("FF3627"));
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            dude.holiSprite.get("head").get("mouth").setTexture(new Texture("character/mouth_neutral.png"));
+            ((SingleSpriteNode) dude.holiSprite.get("head"))
+                .get("mouth").doToThis(
+                    sprite -> sprite.setTexture(
+                        new Texture("character/mouth_neutral.png")
+                    )
+                );
         }
     }
 
@@ -132,7 +144,11 @@ public class MainScreen implements Screen {
         happinessBar.setValue(dude.getHappiness());
         hungerBar.setValue(dude.getHunger());
 
-//        dude.holiSprite.doToChildren(sprite -> sprite.setColor(255/255f, 54/255f, 39/255f, MathUtils.colorFunction(d%5)));
+//        dude.holiSprite.doToChildren(
+//            sprite -> sprite.setColor(
+//                255/255f, 54/255f, 39/255f, MathUtils.colorFunction(d%5)
+//            )
+//        );
     }
 
     private void handleFood() {
@@ -159,6 +175,8 @@ public class MainScreen implements Screen {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         dude.render(spriteBatch);
+
+//        lamp.render(spriteBatch);
 
         energyBar.render(shapeRenderer, spriteBatch);
         happinessBar.render(shapeRenderer, spriteBatch);

@@ -1,5 +1,6 @@
 package ifpb.game;
 
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -7,11 +8,14 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Rectangle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.function.Consumer;
+
 
 public class Dude {
     public static final float scaleFactor = .5f;
     private float hunger, happiness, energy;
-    final SpriteNode holiSprite;
+    final SingleSpriteNode holiSprite;
+    final SingleSpriteNode eyes, body, head;
 
     private float timeBlinking;
 
@@ -25,8 +29,7 @@ public class Dude {
         body = new Sprite(new Texture("character/nocolor/body.png"));
         head = new Sprite(new Texture("character/nocolor/head.png"));
 
-        holiSprite = new SpriteNode(
-            null,
+        holiSprite = new SingleSpriteNode(
             new Sprite(
                 new TextureRegion(
                     new Texture("food/lubi.png"),
@@ -37,8 +40,10 @@ public class Dude {
                 )
             )
         );
-        holiSprite.addChild("body", new SpriteNode(holiSprite, body));
-        holiSprite.addChild("head", new SpriteNode(holiSprite, head));
+        this.head = new SingleSpriteNode(head);
+        this.body = new SingleSpriteNode(body);
+        holiSprite.addChild("body", this.body);
+        holiSprite.addChild("head", this.head);
 
         Sprite mouth, eyes, pupils;
 
@@ -47,26 +52,33 @@ public class Dude {
         eyes = new Sprite(new Texture("character/eyes.png"));
         pupils = new Sprite(new Texture("character/pupils.png"));
 
-        SpriteNode headNode = holiSprite.get("head");
-        headNode.addChild("eyes", new SpriteNode(headNode, eyes));
-        headNode.addChild("mouth", new SpriteNode(headNode, mouth));
+        SingleSpriteNode headNode = (SingleSpriteNode) holiSprite.get("head");
+        this.eyes = new SingleSpriteNode(eyes);
+        headNode.addChild("eyes", this.eyes);
+        headNode.addChild("mouth", new SingleSpriteNode(mouth));
 
-        SpriteNode eyesNode = headNode.get("eyes");
-        eyesNode.addChild("pupils", new SpriteNode(eyesNode, pupils));
+        SingleSpriteNode eyesNode = (SingleSpriteNode) headNode.get("eyes");
+        eyesNode.addChild("pupils", new SingleSpriteNode(pupils));
 
         Sprite legs = new Sprite(new Texture("character/legs.png"));
 
-        holiSprite.get("body").addChild("legs", new SpriteNode(holiSprite.get("body"), legs));
+        ((SingleSpriteNode) holiSprite.get("body")).addChild("legs", new SingleSpriteNode(legs));
 
-        holiSprite.setScale(scaleFactor);
-        holiSprite.doToChildren(sprite -> sprite.setColor(15/255f, 220/255f, 223/255f, 1));
+        holiSprite.doToAll(sprite -> sprite.setScale(scaleFactor));
+        changeColor(Color.valueOf("0fdcdf"));
 
 
         timeBlinking = -5f;
     }
 
     public void doPhysics(float d, float delta) {
-        holiSprite.get("head").translate(0, ((float) Math.sin(d)) - ((float) Math.sin(d-delta)));
+        holiSprite.get("head")
+            .doToAll(
+                sprite -> sprite.translate(
+                    0,
+                    ((float) Math.sin(d)) - ((float) Math.sin(d-delta))
+                )
+            );
         updateBlinking(delta);
         timeBlinking %= 5;
     }
@@ -74,21 +86,27 @@ public class Dude {
     private void updateBlinking(float time) {
         timeBlinking += time;
         float amount = 1 - MathUtils.blinkingFunction(timeBlinking);
-        float spriteHeight = holiSprite.get("head").get("eyes").getHeight();
+        float spriteHeight = eyes.getSprite().getHeight();
         int height = (int) (spriteHeight * amount);
-        SpriteNode sprite = holiSprite.get("head").get("eyes");
+        Sprite sprite = eyes.getSprite();
         int x = sprite.getRegionX();
         int y = sprite.getRegionY();
         int width = sprite.getRegionWidth();
-        sprite.setRegion(x, y, width, height);
+        eyes.doToAll(sprite1 -> sprite1.setRegion(x, y, width, height));
     }
 
     public void render(@NotNull SpriteBatch spriteBatch) {
-        holiSprite.draw(spriteBatch);
+        holiSprite.renderAll(spriteBatch);
     }
 
     public void setScale(float scaleFactor) {
-        holiSprite.setScale(scaleFactor);
+        holiSprite.doToAll(sprite -> sprite.setScale(scaleFactor));
+    }
+
+    public void changeColor(Color color) {
+        Consumer<Sprite> consumer = sprite -> sprite.setColor(color);
+        head.doToThis(consumer);
+        body.doToThis(consumer);
     }
 
     public float getHunger() {
@@ -111,6 +129,6 @@ public class Dude {
     }
 
     public Rectangle getBoundingBox() {
-        return holiSprite.get("head").getBoundingRectangle();
+        return ((SingleSpriteNode) holiSprite.get("head")).getSprite().getBoundingRectangle();
     }
 }
