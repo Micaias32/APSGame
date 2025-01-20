@@ -4,15 +4,16 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.OrderedMap;
 
+import java.util.HashSet;
 import java.util.function.Consumer;
 
 public class SingleSpriteNode implements ISpriteLeaf {
     private final Sprite self;
     private final OrderedMap<String, ISpriteLeaf> children = new OrderedMap<>();
+    HashSet<String> disabled = new HashSet<>();
 
     public SingleSpriteNode(Sprite self) {
         this.self = self;
-
     }
 
     public void addChild(String key, ISpriteLeaf sprite) {
@@ -30,7 +31,10 @@ public class SingleSpriteNode implements ISpriteLeaf {
 
     @Override
     public void renderChildren(SpriteBatch spriteBatch) {
-        children.values().forEach(iSpriteLeaf -> iSpriteLeaf.renderAll(spriteBatch));
+        children.forEach(entry -> {
+            if (!disabled.contains(entry.key))
+                entry.value.renderAll(spriteBatch);
+        });
     }
 
     @Override
@@ -51,5 +55,13 @@ public class SingleSpriteNode implements ISpriteLeaf {
 
     public Sprite getSprite() {
         return self;
+    }
+
+    public void disable(String key) {
+        disabled.add(key);
+    }
+
+    public void enable(String key) {
+        disabled.remove(key);
     }
 }

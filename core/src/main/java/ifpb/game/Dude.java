@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import org.jetbrains.annotations.NotNull;
 
@@ -13,16 +14,94 @@ import java.util.function.Consumer;
 
 public class Dude {
     public static final float scaleFactor = .5f;
-    private float hunger, happiness, energy;
+
+    float transitionTime = 0, transitionDuration = 4;
+
+    private float hunger;
+    private float happiness;
+    private float energy;
+    private float health;
+    private Color startColor, endColor, current;
+
+    public float getHealth() {
+        return health;
+    }
+
+    public void setHealth(float health) {
+        if (health < 0) {
+            this.health = 0;
+            return;
+        }
+        if (health > 1) {
+            this.health = 1;
+            return;
+        }
+        this.health = health;
+    }
+
+    public float getEnergy() {
+        return energy;
+    }
+
+    public void setEnergy(float energy) {
+        if (energy < 0) {
+            this.energy = 0;
+            return;
+        }
+        if (energy > 1) {
+            this.energy = 1;
+            return;
+        }
+        this.energy = energy;
+    }
+
+    public float getHappiness() {
+        return happiness;
+    }
+
+    public void setHappiness(float happiness) {
+        if (happiness < 0) {
+            this.happiness = 0;
+            return;
+        }
+        if (happiness > 1) {
+            this.happiness = 1;
+            return;
+        }
+        this.happiness = happiness;
+    }
+
+    public float getHunger() {
+        return hunger;
+    }
+
+    public void setHunger(float hunger) {
+        if (hunger < 0) {
+            this.hunger = 0;
+            return;
+        }
+        if (hunger > 1) {
+            this.hunger = 1;
+            return;
+        }
+        this.hunger = hunger;
+    }
+
+
     final SingleSpriteNode holiSprite;
     final SingleSpriteNode eyes, body, head;
 
     private float timeBlinking;
 
     public Dude() {
-        hunger = .50f;
-        happiness = .75f;
-        energy = .90f;
+        hunger = .0f;
+        happiness = .0f;
+        energy = .0f;
+        health = .0f;
+
+        startColor = Color.valueOf("0fdcdf");
+        endColor = Color.valueOf("0fdcdf");
+        current = Color.valueOf("0fdcdf");
 
         Sprite body, head;
 
@@ -65,7 +144,7 @@ public class Dude {
         ((SingleSpriteNode) holiSprite.get("body")).addChild("legs", new SingleSpriteNode(legs));
 
         holiSprite.doToAll(sprite -> sprite.setScale(scaleFactor));
-        changeColor(Color.valueOf("0fdcdf"));
+        applyColor(current);
 
 
         timeBlinking = -5f;
@@ -81,6 +160,8 @@ public class Dude {
             );
         updateBlinking(delta);
         timeBlinking %= 5;
+
+        updateColorTransition(delta);
     }
 
     private void updateBlinking(float time) {
@@ -96,7 +177,7 @@ public class Dude {
     }
 
     public void render(@NotNull SpriteBatch spriteBatch) {
-        holiSprite.renderAll(spriteBatch);
+        holiSprite.renderChildren(spriteBatch);
     }
 
     public void setScale(float scaleFactor) {
@@ -104,28 +185,40 @@ public class Dude {
     }
 
     public void changeColor(Color color) {
+        startColor = current;
+        endColor = color;
+        transitionDuration = 4.0f;
+        transitionTime = 0.0f;
+    }
+
+    public void applyColor(Color color) {
         Consumer<Sprite> consumer = sprite -> sprite.setColor(color);
         head.doToThis(consumer);
         body.doToThis(consumer);
     }
 
-    public float getHunger() {
-        return hunger;
-    }
-
-    public float getHappiness() {
-        return happiness;
-    }
-
-    public float getEnergy() {
-        return energy;
+    private void updateColorTransition(float delta) {
+        if (transitionTime < transitionDuration) {
+            transitionTime += delta;
+            float progress = MathUtils.colorFunction(transitionTime);
+            current = new Color(
+                Interpolation.linear.apply(startColor.r, endColor.r, progress),
+                Interpolation.linear.apply(startColor.g, endColor.g, progress),
+                Interpolation.linear.apply(startColor.b, endColor.b, progress),
+                Interpolation.linear.apply(startColor.a, endColor.a, progress)
+            );
+        } else {
+            changeColor(Color.valueOf("0fdcdf"));
+        }
+        applyColor(current);
     }
 
     public void consumeFood(@NotNull Food food) {
-        this.energy = Math.min(this.getEnergy() + food.energyLevel, 1.0f);
-        this.happiness = Math.min(this.getHappiness() + food.happinessLevel, 1.0f);
-        this.hunger = Math.min(this.getHunger()+food.hungerLevel, 1.0f);
-        holiSprite.doToChildren(spriteNode -> spriteNode.setColor(food.color));
+        this.setEnergy(this.getEnergy() + food.energyLevel);
+        this.setHappiness(this.getHappiness() + food.happinessLevel);
+        this.setHunger(this.getHunger()+food.hungerLevel);
+        this.setHealth(this.getHealth()+food.healthLevel);
+        changeColor(food.color);
     }
 
     public Rectangle getBoundingBox() {

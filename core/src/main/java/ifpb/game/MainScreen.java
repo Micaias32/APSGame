@@ -30,6 +30,7 @@ public class MainScreen implements Screen {
     Bar energyBar;
     Bar hungerBar;
     Bar happinessBar;
+    Bar healthBar;
     FoodBar foodBar;
     Sprite heldFood;
     Lamp lamp;
@@ -48,7 +49,7 @@ public class MainScreen implements Screen {
 
         dude = new Dude();
         dude.setScale(0.5f);
-        dude.holiSprite.doToChildren(sprite -> sprite.setCenter(80, 45));
+        dude.holiSprite.doToChildren(sprite -> sprite.setCenter(WORLD_WIDTH/2, WORLD_HEIGHT/2));
 
         Vector2 barPos = new Vector2(1, 80);
         Vector2 barSize = new Vector2(20, 5);
@@ -75,6 +76,11 @@ public class MainScreen implements Screen {
             .withY(barPos.y-gap*2)
             .withIcon(new Sprite(new Texture("mainScreen/hunger.png")))
             .build();
+        healthBar = builder.
+            withValue(dude.getHealth())
+            .withY(barPos.y-gap*3)
+            .withIcon(new Sprite(new Texture("mainScreen/health.png")))
+            .build();
 
         foodBar = new FoodBar();
         holdingState = HoldingState.NOT_HOLDING;
@@ -82,7 +88,13 @@ public class MainScreen implements Screen {
         dragPos = new Vector2();
         endPos = new Vector2();
 
-        this.lamp = new Lamp(WORLD_WIDTH/2, WORLD_HEIGHT, 2);
+        this.lamp = new Lamp(WORLD_WIDTH/4, 0, .2f);
+        lamp.getLamp().doToAll(sprite -> sprite.setCenterX(WORLD_WIDTH/2));
+        lamp.getLamp().doToAll(
+            sprite -> sprite.setY(
+                WORLD_HEIGHT/2.81f
+            )
+        );
     }
 
     @Override
@@ -96,11 +108,24 @@ public class MainScreen implements Screen {
 
     Vector2 dragPos, endPos;
     private void input() {
+        Vector2 cursorPos = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+
+        if (Gdx.input.justTouched()) {
+            if (lamp.getLamp().getSprite().getBoundingRectangle().contains(cursorPos)) {
+                lamp.switchState();
+                return;
+            }
+        }
+
         if (sleeping)
             return;
 
-        Vector2 cursorPos = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
         if (Gdx.input.justTouched()) {
+            if (lamp.getLamp().getSprite().getBoundingRectangle().contains(cursorPos)) {
+                lamp.switchState();
+                return;
+            }
+
             dragPos = cursorPos;
             if (FOOD_BOUNDS.contains(dragPos)) {
                 holdingState = HoldingState.IS_HOLDING_FOOD;
@@ -122,7 +147,7 @@ public class MainScreen implements Screen {
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            dude.changeColor(Color.valueOf("FF3627"));
+            dude.changeColor(Color.valueOf("8E00FF"));
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
@@ -133,6 +158,10 @@ public class MainScreen implements Screen {
                     )
                 );
         }
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
+            foodBar.next();
+        }
     }
 
     private void logic(float delta) {
@@ -140,9 +169,18 @@ public class MainScreen implements Screen {
         dude.doPhysics(d, delta);
         handleFood();
 
+        if (!lamp.isOn()) {
+            ((SingleSpriteNode) dude.holiSprite.get("head")).disable("eyes");
+            sleeping = true;
+        } else {
+            ((SingleSpriteNode) dude.holiSprite.get("head")).enable("eyes");
+            sleeping = false;
+        }
+
         energyBar.setValue(dude.getEnergy());
         happinessBar.setValue(dude.getHappiness());
         hungerBar.setValue(dude.getHunger());
+        healthBar.setValue(dude.getHealth());
 
 //        dude.holiSprite.doToChildren(
 //            sprite -> sprite.setColor(
@@ -176,11 +214,12 @@ public class MainScreen implements Screen {
 
         dude.render(spriteBatch);
 
-//        lamp.render(spriteBatch);
+        lamp.render(spriteBatch);
 
         energyBar.render(shapeRenderer, spriteBatch);
         happinessBar.render(shapeRenderer, spriteBatch);
         hungerBar.render(shapeRenderer, spriteBatch);
+        healthBar.render(shapeRenderer, spriteBatch);
         foodBar.render(spriteBatch);
 
         if (heldFood != null) {

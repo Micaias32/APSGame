@@ -14,6 +14,7 @@ public class Lamp {
     public Lamp(float x, float y, float scale) {
         dim = new Sprite(new Texture("mainScreen/dim.png"));
         dim.setSize(MainScreen.WORLD_WIDTH, MainScreen.WORLD_HEIGHT);
+        dim.setAlpha(.5f);
 
         lamp = new SingleSpriteNode(new Sprite(new Texture("mainScreen/lamp/lamp.png")));
 
@@ -55,5 +56,13 @@ public class Lamp {
     public void switchState() {
         ((MultiSingleSpriteNode) lamp.get("state")).setCurrent(isOn? "off" : "on");
         isOn = !isOn;
+    }
+
+    public boolean isOn() {
+        return isOn;
+    }
+
+    public SingleSpriteNode getLamp() {
+        return this.lamp;
     }
 }
