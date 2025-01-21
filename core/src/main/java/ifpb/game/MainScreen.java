@@ -20,6 +20,7 @@ import static ifpb.game.FoodBar.FOOD_BOUNDS;
 public class MainScreen implements Screen {
     public static final float WORLD_WIDTH = 160;
     public static final float WORLD_HEIGHT = 90;
+    long timeFromBeginning;
 
     FitViewport viewport;
     SpriteBatch spriteBatch;
@@ -42,6 +43,7 @@ public class MainScreen implements Screen {
     @Override
     public void show() {
         // Prepare your screen here.
+        timeFromBeginning = 0;
 
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT);
         spriteBatch = new SpriteBatch();
@@ -108,6 +110,12 @@ public class MainScreen implements Screen {
 
     Vector2 dragPos, endPos;
     private void input() {
+
+        if (Gdx.input.isKeyPressed(Input.Keys.F))
+            Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
+        if (Gdx.input.isKeyPressed(Input.Keys.G))
+            Gdx.graphics.setWindowedMode(1280, 720);
+
         Vector2 cursorPos = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
 
         if (Gdx.input.justTouched()) {
@@ -182,11 +190,6 @@ public class MainScreen implements Screen {
         hungerBar.setValue(dude.getHunger());
         healthBar.setValue(dude.getHealth());
 
-//        dude.holiSprite.doToChildren(
-//            sprite -> sprite.setColor(
-//                255/255f, 54/255f, 39/255f, MathUtils.colorFunction(d%5)
-//            )
-//        );
     }
 
     private void handleFood() {

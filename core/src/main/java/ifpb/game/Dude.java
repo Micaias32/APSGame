@@ -14,6 +14,7 @@ import java.util.function.Consumer;
 
 public class Dude {
     public static final float scaleFactor = .5f;
+    public static final Color MAIN_COLOR = Color.valueOf("0fdcdf");
 
     float transitionTime = 0, transitionDuration = 4;
 
@@ -99,9 +100,9 @@ public class Dude {
         energy = .0f;
         health = .0f;
 
-        startColor = Color.valueOf("0fdcdf");
-        endColor = Color.valueOf("0fdcdf");
-        current = Color.valueOf("0fdcdf");
+        startColor = MAIN_COLOR;
+        endColor = MAIN_COLOR;
+        current = MAIN_COLOR;
 
         Sprite body, head;
 
@@ -201,6 +202,10 @@ public class Dude {
         if (transitionTime < transitionDuration) {
             transitionTime += delta;
             float progress = MathUtils.colorFunction(transitionTime);
+
+            if (endColor.equals(MAIN_COLOR) && transitionTime > 2) {
+                startColor = MAIN_COLOR;
+            }
             current = new Color(
                 Interpolation.linear.apply(startColor.r, endColor.r, progress),
                 Interpolation.linear.apply(startColor.g, endColor.g, progress),
@@ -208,7 +213,7 @@ public class Dude {
                 Interpolation.linear.apply(startColor.a, endColor.a, progress)
             );
         } else {
-            changeColor(Color.valueOf("0fdcdf"));
+            changeColor(MAIN_COLOR);
         }
         applyColor(current);
     }
@@ -225,3 +230,4 @@ public class Dude {
         return ((SingleSpriteNode) holiSprite.get("head")).getSprite().getBoundingRectangle();
     }
 }
+// PRIMARY KEY AUTOINCREMENT
