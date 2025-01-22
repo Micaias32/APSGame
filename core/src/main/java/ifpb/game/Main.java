@@ -8,6 +8,7 @@ import com.badlogic.gdx.Game;
 public class Main extends Game {
     @Override
     public void create() {
-        setScreen(new MainScreen());
+        System.out.println(GameState.statePath);
+        setScreen(new LoadingScreen(this));
     }
 }

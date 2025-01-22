@@ -8,6 +8,7 @@ import java.util.function.Consumer;
 public interface ISpriteLeaf {
 
     void renderThis(SpriteBatch spriteBatch);
+
     void renderChildren(SpriteBatch spriteBatch);
 
     default void renderAll(SpriteBatch spriteBatch) {
@@ -16,6 +17,7 @@ public interface ISpriteLeaf {
     }
 
     void doToThis(Consumer<Sprite> consumer);
+
     void doToChildren(Consumer<Sprite> consumer);
 
     default void doToAll(Consumer<Sprite> consumer) {

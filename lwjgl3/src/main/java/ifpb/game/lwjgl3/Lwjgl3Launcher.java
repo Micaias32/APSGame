@@ -3,6 +3,7 @@ package ifpb.game.lwjgl3;
 import com.badlogic.gdx.Graphics;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
+import ifpb.game.GameState;
 import ifpb.game.Main;
 
 /**
@@ -11,10 +12,11 @@ import ifpb.game.Main;
 public class Lwjgl3Launcher {
     public static void main(String[] args) {
         if (StartupHelper.startNewJvmIfRequired()) return; // This handles macOS support and helps on Windows.
-        createApplication();
+        createApplication(args[0]);
     }
 
-    private static Lwjgl3Application createApplication() {
+    private static Lwjgl3Application createApplication(String path) {
+        GameState.statePath = path;
         return new Lwjgl3Application(new Main(), getDefaultConfiguration());
     }
 

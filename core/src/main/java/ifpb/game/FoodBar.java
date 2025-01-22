@@ -12,15 +12,15 @@ import java.util.ArrayList;
 public class FoodBar {
     public static final float PADDING = 2;
     public static final Rectangle FOOD_BOUNDS = new Rectangle(
-        MainScreen.WORLD_WIDTH-Food.FOOD_SIZE-PADDING,
-        MainScreen.WORLD_HEIGHT-Food.FOOD_SIZE-PADDING,
+        MainScreen.WORLD_WIDTH - Food.FOOD_SIZE - PADDING,
+        MainScreen.WORLD_HEIGHT - Food.FOOD_SIZE - PADDING,
         Food.FOOD_SIZE,
         Food.FOOD_SIZE
-        );
+    );
 
     private final ArrayList<Food> foods;
-    private int index;
     private final Sprite buttonNext;
+    private int index;
 
     public FoodBar() {
         this.foods = new ArrayList<>();
@@ -71,7 +71,7 @@ public class FoodBar {
         buttonNext.setSize(8, 8);
         buttonNext.setPosition(
             MainScreen.WORLD_WIDTH - 8 - PADDING,
-            MainScreen.WORLD_HEIGHT - Food.FOOD_SIZE - 8 - (PADDING*2)
+            MainScreen.WORLD_HEIGHT - Food.FOOD_SIZE - 8 - (PADDING * 2)
         );
     }
 

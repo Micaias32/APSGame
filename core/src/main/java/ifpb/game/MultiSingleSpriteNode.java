@@ -19,13 +19,12 @@ public class MultiSingleSpriteNode implements ISpriteLeaf {
         sprites.put(key, sprite);
     }
 
+    public String getCurrent() {
+        return current;
+    }
 
     public void setCurrent(String current) {
         this.current = current;
-    }
-
-    public String getCurrent() {
-        return current;
     }
 
     @Override

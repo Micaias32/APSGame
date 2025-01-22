@@ -37,8 +37,7 @@ public class MainScreen implements Screen {
     Sprite heldFood;
     Lamp lamp;
     boolean sleeping = false;
-
-
+    Vector2 dragPos, endPos;
 
     @Override
     public void show() {
@@ -51,7 +50,7 @@ public class MainScreen implements Screen {
 
         dude = new Dude();
         dude.setScale(0.5f);
-        dude.holiSprite.doToChildren(sprite -> sprite.setCenter(WORLD_WIDTH/2, WORLD_HEIGHT/2));
+        dude.holiSprite.doToChildren(sprite -> sprite.setCenter(WORLD_WIDTH / 2, WORLD_HEIGHT / 2));
 
         Vector2 barPos = new Vector2(1, 80);
         Vector2 barSize = new Vector2(20, 5);
@@ -70,17 +69,17 @@ public class MainScreen implements Screen {
             .build();
         happinessBar = builder.
             withValue(GameState.getEnergy())
-            .withY(barPos.y-gap*1)
+            .withY(barPos.y - gap * 1)
             .withIcon(new Sprite(new Texture("mainScreen/happiness.png")))
             .build();
         hungerBar = builder.
             withValue(GameState.getHunger())
-            .withY(barPos.y-gap*2)
+            .withY(barPos.y - gap * 2)
             .withIcon(new Sprite(new Texture("mainScreen/hunger.png")))
             .build();
         healthBar = builder.
             withValue(GameState.getHealth())
-            .withY(barPos.y-gap*3)
+            .withY(barPos.y - gap * 3)
             .withIcon(new Sprite(new Texture("mainScreen/health.png")))
             .build();
 
@@ -90,11 +89,11 @@ public class MainScreen implements Screen {
         dragPos = new Vector2();
         endPos = new Vector2();
 
-        this.lamp = new Lamp(WORLD_WIDTH/4, 0, .2f);
-        lamp.getLamp().doToAll(sprite -> sprite.setCenterX(WORLD_WIDTH/2));
+        this.lamp = new Lamp(WORLD_WIDTH / 4, 0, .2f);
+        lamp.getLamp().doToAll(sprite -> sprite.setCenterX(WORLD_WIDTH / 2));
         lamp.getLamp().doToAll(
             sprite -> sprite.setY(
-                WORLD_HEIGHT/2.81f
+                WORLD_HEIGHT / 2.81f
             )
         );
     }
@@ -108,7 +107,6 @@ public class MainScreen implements Screen {
 
     }
 
-    Vector2 dragPos, endPos;
     private void input() {
 
         if (Gdx.input.isKeyPressed(Input.Keys.F))
@@ -139,7 +137,7 @@ public class MainScreen implements Screen {
         }
         if (Gdx.input.isTouched()) {
             endPos = cursorPos;
-        } else if (holdingState != HoldingState.STOPPED_HOLDING && holdingState != HoldingState.NOT_HOLDING && holdingState != HoldingState.STOPPED_HOLDING_FOOD){
+        } else if (holdingState != HoldingState.STOPPED_HOLDING && holdingState != HoldingState.NOT_HOLDING && holdingState != HoldingState.STOPPED_HOLDING_FOOD) {
             if (holdingState == HoldingState.IS_HOLDING_FOOD) {
                 holdingState = HoldingState.STOPPED_HOLDING_FOOD;
             } else {
@@ -253,6 +251,7 @@ public class MainScreen implements Screen {
     @Override
     public void hide() {
         // This method is called when another screen replaces this one.
+        GameState.save();
     }
 
     @Override

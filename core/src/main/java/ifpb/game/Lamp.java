@@ -54,7 +54,7 @@ public class Lamp {
     }
 
     public void switchState() {
-        ((MultiSingleSpriteNode) lamp.get("state")).setCurrent(isOn? "off" : "on");
+        ((MultiSingleSpriteNode) lamp.get("state")).setCurrent(isOn ? "off" : "on");
         isOn = !isOn;
     }
 

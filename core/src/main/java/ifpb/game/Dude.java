@@ -15,16 +15,10 @@ import java.util.function.Consumer;
 public class Dude {
     public static final float scaleFactor = .5f;
     public static final Color MAIN_COLOR = Color.valueOf("0fdcdf");
-
-    float transitionTime = 0, transitionDuration = 4;
-
-    private Color startColor, endColor, current;
-
-
-
     final SingleSpriteNode holiSprite;
     final SingleSpriteNode eyes, body, head;
-
+    float transitionTime = 0, transitionDuration = 4;
+    private Color startColor, endColor, current;
     private float timeBlinking;
 
     public Dude() {
@@ -85,7 +79,7 @@ public class Dude {
             .doToAll(
                 sprite -> sprite.translate(
                     0,
-                    ((float) Math.sin(d)) - ((float) Math.sin(d-delta))
+                    ((float) Math.sin(d)) - ((float) Math.sin(d - delta))
                 )
             );
         updateBlinking(delta);
@@ -150,8 +144,8 @@ public class Dude {
     public void consumeFood(@NotNull Food food) {
         GameState.setEnergy(GameState.getEnergy() + food.energyLevel);
         GameState.setHappiness(GameState.getHappiness() + food.happinessLevel);
-        GameState.setHunger(GameState.getHunger()+food.hungerLevel);
-        GameState.setHealth(GameState.getHealth()+food.healthLevel);
+        GameState.setHunger(GameState.getHunger() + food.hungerLevel);
+        GameState.setHealth(GameState.getHealth() + food.healthLevel);
         changeColor(food.color);
     }
 

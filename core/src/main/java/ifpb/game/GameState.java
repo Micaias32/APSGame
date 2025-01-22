@@ -1,17 +1,25 @@
 package ifpb.game;
 
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.Writer;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.HashMap;
+
 public class GameState {
 
+    public static String statePath;
+    public static long timeSinceUpdate = 0;
+    public static boolean isLightOn = true, sleeping = false;
+    public static HoldingState holdingState;
     private static float
         health = 0f,
         hunger = 0f,
         energy = 0f,
         happiness = 0f;
-
-    public static boolean isLightOn = true, sleeping = false;
-
-    public static HoldingState holdingState;
 
     public static float getHealth() {
         return health;
@@ -78,4 +86,39 @@ public class GameState {
     }
 
 
+    public static void save() {
+        File file = new File(statePath);
+        FileWriter writer;
+        try {
+            writer = new FileWriter(file);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        HashMap<String, String> data = new HashMap<>();
+
+        data.put("energy", String.valueOf(energy));
+        data.put("health", String.valueOf(health));
+        data.put("hunger", String.valueOf(hunger));
+        data.put("happiness", String.valueOf(happiness));
+        data.put("light", String.valueOf(isLightOn));
+        data.put("sleeping", String.valueOf(sleeping));
+        data.put("time", String.valueOf(LocalDateTime.now().toEpochSecond(ZoneOffset.ofHours(-3))));
+
+        data.forEach((key, value) -> {
+            try {
+                writer.write(String.format("%s,%s\n", key, value));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void updateTime() {
+    }
 }

@@ -9,11 +9,11 @@ public class MathUtils {
         if (timePassed < 0 | timePassed > .5f) {
             return 0;
         }
-        return (float) pow(-4 * timePassed, 2)+ 1;
+        return (float) pow(-4 * timePassed, 2) + 1;
     }
 
     public static float colorFunction(float timePassed) {
-        double res = -pow(timePassed/sqrt(2)-sqrt(2), 2)+2;
+        double res = -pow(timePassed / sqrt(2) - sqrt(2), 2) + 2;
         if (res < 1.0) {
             return (float) res;
         }

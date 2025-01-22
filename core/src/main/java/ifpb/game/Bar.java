@@ -11,49 +11,49 @@ import com.badlogic.gdx.utils.Disposable;
 import org.jetbrains.annotations.NotNull;
 
 public class Bar implements Disposable {
-	Rectangle outer, inner;
-	Color color, bgColor;
+    Rectangle outer, inner;
+    Color color, bgColor;
 
     BarIcon icon;
 
-	float value;
+    float value;
 
-	public Bar(float x, float y, float width, float height, Color color, Color bgColor, float value, Sprite icon) {
+    public Bar(float x, float y, float width, float height, Color color, Color bgColor, float value, Sprite icon) {
         // needs to be a square so height on both
         // noinspection SuspiciousNameCombination
         this.icon = new BarIcon(icon, x, y, height, height);
 
-        x = x+height+1;
-		outer = new Rectangle(x, y, width, height);
-		float inX, inY, inWidth, inHeight;
-		float border = height * .05f;
-		inX = x + border;
-		inY = y + border;
-		inWidth = width - (2*border);
-		inHeight = height - (2*border);
-		inner = new Rectangle(inX, inY, inWidth, inHeight);
-		this.color = color;
-		this.value = value;
+        x = x + height + 1;
+        outer = new Rectangle(x, y, width, height);
+        float inX, inY, inWidth, inHeight;
+        float border = height * .05f;
+        inX = x + border;
+        inY = y + border;
+        inWidth = width - (2 * border);
+        inHeight = height - (2 * border);
+        inner = new Rectangle(inX, inY, inWidth, inHeight);
+        this.color = color;
+        this.value = value;
         this.bgColor = bgColor;
 
-	}
+    }
 
-	void setValue(float value) {
-		if (value >= 0f && value <= 1f) {
-			this.value = value;
-		}
-	}
+    void setValue(float value) {
+        if (value >= 0f && value <= 1f) {
+            this.value = value;
+        }
+    }
 
-	public void render(@NotNull ShapeRenderer shapeRenderer, @NotNull SpriteBatch spriteBatch) {
+    public void render(@NotNull ShapeRenderer shapeRenderer, @NotNull SpriteBatch spriteBatch) {
         icon.render(spriteBatch);
-		shapeRenderer.rect(outer.x, outer.y, outer.width, outer.height,
-				bgColor, bgColor, bgColor, bgColor);
-		shapeRenderer.rect(inner.x, inner.y, inner.width, inner.height,
-				Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
-		float barSize = inner.width * value;
-		shapeRenderer.rect(inner.x, inner.y, barSize, inner.height,
-				Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE);
-	}
+        shapeRenderer.rect(outer.x, outer.y, outer.width, outer.height,
+            bgColor, bgColor, bgColor, bgColor);
+        shapeRenderer.rect(inner.x, inner.y, inner.width, inner.height,
+            Color.BLACK, Color.BLACK, Color.BLACK, Color.BLACK);
+        float barSize = inner.width * value;
+        shapeRenderer.rect(inner.x, inner.y, barSize, inner.height,
+            Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE);
+    }
 
     @Override
     public void dispose() {
@@ -68,7 +68,7 @@ public class Bar implements Disposable {
         private float height = 20f;
         private Color color = Color.WHITE;
         private float value = 1f;
-        private Color bgColor = new Color(.02f, .45f, .49f,  1f);
+        private Color bgColor = new Color(.02f, .45f, .49f, 1f);
         private Sprite icon = new Sprite();
 
         public Builder withX(float x) {
