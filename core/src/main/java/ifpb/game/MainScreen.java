@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import static ifpb.game.FoodBar.FOOD_BOUNDS;
+import static ifpb.game.GameState.holdingState;
 
 /**
  * First screen of the application. Displayed after the application is created.
@@ -37,7 +38,6 @@ public class MainScreen implements Screen {
     Lamp lamp;
     boolean sleeping = false;
 
-    HoldingState holdingState;
 
 
     @Override
@@ -64,22 +64,22 @@ public class MainScreen implements Screen {
             .withHeight(barSize.y);
 
         energyBar = builder.
-            withValue(dude.getEnergy())
+            withValue(GameState.getEnergy())
             .withY(barPos.y)
             .withIcon(new Sprite(new Texture("mainScreen/energy.png")))
             .build();
         happinessBar = builder.
-            withValue(dude.getEnergy())
+            withValue(GameState.getEnergy())
             .withY(barPos.y-gap*1)
             .withIcon(new Sprite(new Texture("mainScreen/happiness.png")))
             .build();
         hungerBar = builder.
-            withValue(dude.getHunger())
+            withValue(GameState.getHunger())
             .withY(barPos.y-gap*2)
             .withIcon(new Sprite(new Texture("mainScreen/hunger.png")))
             .build();
         healthBar = builder.
-            withValue(dude.getHealth())
+            withValue(GameState.getHealth())
             .withY(barPos.y-gap*3)
             .withIcon(new Sprite(new Texture("mainScreen/health.png")))
             .build();
@@ -185,10 +185,10 @@ public class MainScreen implements Screen {
             sleeping = false;
         }
 
-        energyBar.setValue(dude.getEnergy());
-        happinessBar.setValue(dude.getHappiness());
-        hungerBar.setValue(dude.getHunger());
-        healthBar.setValue(dude.getHealth());
+        energyBar.setValue(GameState.getEnergy());
+        happinessBar.setValue(GameState.getHappiness());
+        hungerBar.setValue(GameState.getHunger());
+        healthBar.setValue(GameState.getHealth());
 
     }
 

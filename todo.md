@@ -4,3 +4,4 @@
 - [x] Food effects (changing color upon eating)
 - [ ] Sleeping
 - [x] New tree sprite system
+- [ ] Update light texture (sun and moon)

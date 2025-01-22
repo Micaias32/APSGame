@@ -18,75 +18,8 @@ public class Dude {
 
     float transitionTime = 0, transitionDuration = 4;
 
-    private float hunger;
-    private float happiness;
-    private float energy;
-    private float health;
     private Color startColor, endColor, current;
 
-    public float getHealth() {
-        return health;
-    }
-
-    public void setHealth(float health) {
-        if (health < 0) {
-            this.health = 0;
-            return;
-        }
-        if (health > 1) {
-            this.health = 1;
-            return;
-        }
-        this.health = health;
-    }
-
-    public float getEnergy() {
-        return energy;
-    }
-
-    public void setEnergy(float energy) {
-        if (energy < 0) {
-            this.energy = 0;
-            return;
-        }
-        if (energy > 1) {
-            this.energy = 1;
-            return;
-        }
-        this.energy = energy;
-    }
-
-    public float getHappiness() {
-        return happiness;
-    }
-
-    public void setHappiness(float happiness) {
-        if (happiness < 0) {
-            this.happiness = 0;
-            return;
-        }
-        if (happiness > 1) {
-            this.happiness = 1;
-            return;
-        }
-        this.happiness = happiness;
-    }
-
-    public float getHunger() {
-        return hunger;
-    }
-
-    public void setHunger(float hunger) {
-        if (hunger < 0) {
-            this.hunger = 0;
-            return;
-        }
-        if (hunger > 1) {
-            this.hunger = 1;
-            return;
-        }
-        this.hunger = hunger;
-    }
 
 
     final SingleSpriteNode holiSprite;
@@ -95,10 +28,6 @@ public class Dude {
     private float timeBlinking;
 
     public Dude() {
-        hunger = .0f;
-        happiness = .0f;
-        energy = .0f;
-        health = .0f;
 
         startColor = MAIN_COLOR;
         endColor = MAIN_COLOR;
@@ -219,10 +148,10 @@ public class Dude {
     }
 
     public void consumeFood(@NotNull Food food) {
-        this.setEnergy(this.getEnergy() + food.energyLevel);
-        this.setHappiness(this.getHappiness() + food.happinessLevel);
-        this.setHunger(this.getHunger()+food.hungerLevel);
-        this.setHealth(this.getHealth()+food.healthLevel);
+        GameState.setEnergy(GameState.getEnergy() + food.energyLevel);
+        GameState.setHappiness(GameState.getHappiness() + food.happinessLevel);
+        GameState.setHunger(GameState.getHunger()+food.hungerLevel);
+        GameState.setHealth(GameState.getHealth()+food.healthLevel);
         changeColor(food.color);
     }
 
