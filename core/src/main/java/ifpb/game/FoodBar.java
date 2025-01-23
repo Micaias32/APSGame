@@ -19,7 +19,7 @@ public class FoodBar {
     );
 
     private final ArrayList<Food> foods;
-    private final Sprite buttonNext;
+    public final Sprite buttonNext, buttonPrevious;
     private int index;
 
     public FoodBar() {
@@ -41,13 +41,13 @@ public class FoodBar {
             .01f,
             .30f,
             .30f,
-            .05f,
+            .2f,
 //            Color.valueOf("FF3627")
             Color.RED
         ));
         foods.add(new Food(
             new Texture("food/chicken.png"),
-            -.01f,
+            -.1f,
             .40f,
             .20f,
             .0f,
@@ -73,15 +73,24 @@ public class FoodBar {
             MainScreen.WORLD_WIDTH - 8 - PADDING,
             MainScreen.WORLD_HEIGHT - Food.FOOD_SIZE - 8 - (PADDING * 2)
         );
+
+        buttonPrevious = new Sprite(buttonNext);
+        buttonPrevious.setFlip(true, false);
+        buttonPrevious.translateX(- Food.FOOD_SIZE + 8);
     }
 
-    Food next() {
-        Food food = foods.get(index);
+    void next() {
         index++;
         if (index == foods.size()) {
             index = 0;
         }
-        return food;
+    }
+
+    void previous() {
+        index--;
+        if (index < 0) {
+            index = foods.size() - 1;
+        }
     }
 
     public Food getFood() {
@@ -92,5 +101,6 @@ public class FoodBar {
     void render(SpriteBatch spriteBatch) {
         foods.get(index).sprite.draw(spriteBatch);
         buttonNext.draw(spriteBatch);
+        buttonPrevious.draw(spriteBatch);
     }
 }

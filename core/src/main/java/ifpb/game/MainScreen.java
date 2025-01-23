@@ -13,8 +13,7 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import static ifpb.game.FoodBar.FOOD_BOUNDS;
-import static ifpb.game.GameState.holdingState;
-import static ifpb.game.GameState.updateTime;
+import static ifpb.game.GameState.*;
 
 /**
  * First screen of the application. Displayed after the application is created.
@@ -132,6 +131,12 @@ public class MainScreen implements Screen {
             } else {
                 holdingState = HoldingState.IS_HOLDING;
             }
+
+            if (foodBar.buttonPrevious.getBoundingRectangle().contains(cursorPos)) {
+                foodBar.previous();
+            } else if (foodBar.buttonNext.getBoundingRectangle().contains(cursorPos)) {
+                foodBar.next();
+            }
             return;
         }
         if (Gdx.input.isTouched()) {
@@ -154,18 +159,6 @@ public class MainScreen implements Screen {
             dude.changeColor(Color.valueOf("8E00FF"));
         }
 
-        if (Gdx.input.isKeyJustPressed(Input.Keys.S)) {
-            ((SingleSpriteNode) dude.holiSprite.get("head"))
-                .get("mouth").doToThis(
-                    sprite -> sprite.setTexture(
-                        new Texture("character/mouth_neutral.png")
-                    )
-                );
-        }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.N)) {
-            foodBar.next();
-        }
     }
 
     private void logic(float delta) {
@@ -179,6 +172,14 @@ public class MainScreen implements Screen {
         } else {
             ((SingleSpriteNode) dude.holiSprite.get("head")).enable("eyes");
         }
+        String current;
+        if (isLightOn) {
+            current = "happy";
+        } else {
+            current = "serious";
+        }
+
+        ((MultiSpriteNode) ((SingleSpriteNode) dude.holiSprite.get("head")).get("mouth")).setCurrent(current);
 
         energyBar.setValue(GameState.getEnergy());
         happinessBar.setValue(GameState.getHappiness());

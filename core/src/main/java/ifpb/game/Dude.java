@@ -9,6 +9,7 @@ import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
 import java.util.function.Consumer;
 
 
@@ -48,9 +49,10 @@ public class Dude {
         holiSprite.addChild("body", this.body);
         holiSprite.addChild("head", this.head);
 
-        Sprite mouth, eyes, pupils;
+        Sprite mouthHappy, mouthSerious, eyes, pupils;
 
-        mouth = new Sprite(new Texture("character/mouth.png"));
+        mouthHappy = new Sprite(new Texture("character/mouth.png"));
+        mouthSerious = new Sprite(new Texture("character/mouth_neutral.png"));
 
         eyes = new Sprite(new Texture("character/eyes.png"));
         pupils = new Sprite(new Texture("character/pupils.png"));
@@ -58,7 +60,12 @@ public class Dude {
         SingleSpriteNode headNode = (SingleSpriteNode) holiSprite.get("head");
         this.eyes = new SingleSpriteNode(eyes);
         headNode.addChild("eyes", this.eyes);
-        headNode.addChild("mouth", new SingleSpriteNode(mouth));
+
+        HashMap<String, ISpriteLeaf> options = new HashMap<>();
+        options.put("happy", new SingleSpriteNode(mouthHappy));
+        options.put("serious", new SingleSpriteNode(mouthSerious));
+        MultiSpriteNode mouthNode = new MultiSpriteNode(options, "happy");
+        headNode.addChild("mouth", mouthNode);
 
         SingleSpriteNode eyesNode = (SingleSpriteNode) headNode.get("eyes");
         eyesNode.addChild("pupils", new SingleSpriteNode(pupils));

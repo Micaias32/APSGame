@@ -9,7 +9,6 @@ import java.util.HashMap;
 public class Lamp {
     private final SingleSpriteNode lamp;
     private final Sprite dim;
-    private boolean isOn;
 
     public Lamp(float x, float y, float scale) {
         dim = new Sprite(new Texture("mainScreen/dim.png"));
@@ -17,6 +16,7 @@ public class Lamp {
         dim.setAlpha(.5f);
 
         lamp = new SingleSpriteNode(new Sprite(new Texture("mainScreen/lamp/lamp.png")));
+        lamp.doToThis(sprite -> sprite.setColor(0, 0, 0, 0));
 
         HashMap<String, ISpriteLeaf> sprites = new HashMap<>();
         sprites.put(
@@ -24,7 +24,7 @@ public class Lamp {
             new SingleSpriteNode(
                 new Sprite(
                     new Texture(
-                        "mainScreen/lamp/on.png"
+                        "mainScreen/lamp/sun.png"
                     )
                 )
             )
@@ -34,14 +34,13 @@ public class Lamp {
             new SingleSpriteNode(
                 new Sprite(
                     new Texture(
-                        "mainScreen/lamp/off.png"
+                        "mainScreen/lamp/moon.png"
                     )
                 )
             )
         );
 
         lamp.addChild("state", new MultiSpriteNode(sprites, GameState.isLightOn ? "on" : "off"));
-        isOn = GameState.isLightOn;
         lamp.doToAll(sprite -> sprite.setPosition(x, y));
         lamp.doToAll(sprite -> sprite.setScale(scale));
     }
@@ -54,14 +53,9 @@ public class Lamp {
     }
 
     public void switchState() {
-        ((MultiSpriteNode) lamp.get("state")).setCurrent(isOn ? "off" : "on");
-        isOn = !isOn;
-        GameState.isLightOn = false;
-        GameState.sleeping = GameState.getEnergy() < .9f;
-    }
-
-    public boolean isOn() {
-        return isOn;
+        GameState.isLightOn = !GameState.isLightOn;
+        ((MultiSpriteNode) lamp.get("state")).setCurrent(GameState.isLightOn ? "on" : "off");
+        GameState.sleeping = !GameState.isLightOn && GameState.getEnergy() < .9f;
     }
 
     public SingleSpriteNode getLamp() {

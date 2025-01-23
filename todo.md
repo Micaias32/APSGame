@@ -1,7 +1,7 @@
 - [x] Save state and time
-- [ ] Calculate state based on time passed
+- [x] Calculate state based on time passed
 - [x] Add all foods
 - [x] Food effects (changing color upon eating)
-- [ ] Sleeping
+- [x] Sleeping
 - [x] New tree sprite system
-- [ ] Update light texture (sun and moon)
+- [x] Update light texture (sun and moon)
