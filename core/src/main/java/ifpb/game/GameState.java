@@ -126,16 +126,18 @@ public class GameState {
     public static void updateTime() {
         while (timeSinceUpdate >= 60) {
             if (sleeping) {
-                energy += .1f;
+                setEnergy(energy + .1f);
+            } else {
+                setEnergy(energy - .01f);
             }
             if (energy == 1) {
                 sleeping = false;
             }
             if (energy == 0) {
-                health -= .1f;
+                setHealth(health - .1f);
             }
-            hunger -= .05f;
-            happiness -= .01f;
+            setHunger(hunger - .05f);
+            setHappiness(happiness - .01f);
 
             timeSinceUpdate -= 60;
         }
