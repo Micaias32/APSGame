@@ -1,7 +1,7 @@
-happiness,1.0
-light,false
+happiness,0.99
+light,true
 health,1.0
-time,1737669602
+time,1737671149
 sleeping,false
-energy,0.98
-hunger,0.3
+energy,0.99
+hunger,0.95

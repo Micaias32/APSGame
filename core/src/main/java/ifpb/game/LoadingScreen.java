@@ -107,7 +107,6 @@ public class LoadingScreen extends InputAdapter implements Screen {
         }
 
         public void run() {
-            System.err.println("t h r e a d");
 
             HashMap<String, String> things = getStringStringHashMap();
 

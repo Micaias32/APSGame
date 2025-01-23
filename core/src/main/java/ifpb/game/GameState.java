@@ -120,7 +120,6 @@ public class GameState {
 
     public static void incrementTime() {
         timeSinceUpdate += 1;
-        System.out.println(timeSinceUpdate);
     }
 
     public static void updateTime() {
