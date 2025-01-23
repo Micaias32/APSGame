@@ -26,6 +26,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
     int width, height;
     boolean loaded = false;
 
+
     SpriteBatch spriteBatch = new SpriteBatch();
 
     public LoadingScreen(Game game) {
@@ -140,6 +141,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
         private HashMap<String, String> getStringStringHashMap() {
             File file = new File(path);
             try {
+                @SuppressWarnings("unused")
                 var created = file.createNewFile();
             } catch (IOException e) {
                 throw new RuntimeException(e);

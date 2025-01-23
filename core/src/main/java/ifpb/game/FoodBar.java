@@ -42,8 +42,7 @@ public class FoodBar {
             .30f,
             .30f,
             .2f,
-//            Color.valueOf("FF3627")
-            Color.RED
+            Color.valueOf("921010")
         ));
         foods.add(new Food(
             new Texture("food/chicken.png"),
@@ -59,8 +58,7 @@ public class FoodBar {
             .05f,
             .10f,
             -.10f,
-//            Color.valueOf("FF3627")
-            Color.GREEN
+            Color.valueOf("01FF00")
         ));
         foods.forEach(food -> food.sprite.setPosition(
             FOOD_BOUNDS.x,

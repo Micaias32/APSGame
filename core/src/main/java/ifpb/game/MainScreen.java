@@ -13,7 +13,8 @@ import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import static ifpb.game.FoodBar.FOOD_BOUNDS;
-import static ifpb.game.GameState.*;
+import static ifpb.game.GameState.holdingState;
+import static ifpb.game.GameState.updateTime;
 
 /**
  * First screen of the application. Displayed after the application is created.
@@ -28,6 +29,7 @@ public class MainScreen implements Screen {
 
     float timeSincePlaying;
     float looped1SecTime;
+    Sprite background = new Sprite(new Texture("mainScreen/bg.png"));
     Dude dude;
     Bar energyBar;
     Bar hungerBar;
@@ -45,6 +47,11 @@ public class MainScreen implements Screen {
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT);
         spriteBatch = new SpriteBatch();
         shapeRenderer = new ShapeRenderer();
+
+        background.setCenter(WORLD_WIDTH / 2f, WORLD_HEIGHT / 2f);
+        float scale = WORLD_WIDTH / background.getWidth();
+        background.setScale(scale);
+        background.translateY(5);
 
         dude = new Dude();
         dude.setScale(0.5f);
@@ -107,20 +114,37 @@ public class MainScreen implements Screen {
 
     private void input() {
 
+        handleFullscreen();
+
+        Vector2 cursorPos = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
+
+        handleLamp(cursorPos);
+
+        handleHolding(cursorPos);
+
+
+        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
+            dude.changeColor(Color.valueOf("8E00FF"));
+        }
+
+    }
+
+    public void handleFullscreen() {
         if (Gdx.input.isKeyPressed(Input.Keys.F))
             Gdx.graphics.setFullscreenMode(Gdx.graphics.getDisplayMode());
         if (Gdx.input.isKeyPressed(Input.Keys.G))
             Gdx.graphics.setWindowedMode(1280, 720);
+    }
 
-        Vector2 cursorPos = viewport.unproject(new Vector2(Gdx.input.getX(), Gdx.input.getY()));
-
+    public void handleLamp(Vector2 cursorPos) {
         if (Gdx.input.justTouched()) {
             if (lamp.getLamp().getSprite().getBoundingRectangle().contains(cursorPos)) {
                 lamp.switchState();
-                return;
             }
         }
+    }
 
+    public void handleHolding(Vector2 cursorPos) {
         if (GameState.sleeping)
             return;
 
@@ -154,11 +178,6 @@ public class MainScreen implements Screen {
 
             holdingState = HoldingState.NOT_HOLDING;
         }
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
-            dude.changeColor(Color.valueOf("8E00FF"));
-        }
-
     }
 
     private void logic(float delta) {
@@ -167,26 +186,12 @@ public class MainScreen implements Screen {
         dude.doPhysics(timeSincePlaying, delta);
         handleFood();
 
-        if (GameState.sleeping) {
-            ((SingleSpriteNode) dude.holiSprite.get("head")).disable("eyes");
-        } else {
-            ((SingleSpriteNode) dude.holiSprite.get("head")).enable("eyes");
-        }
-        String current;
-        if (isLightOn) {
-            current = "happy";
-        } else {
-            current = "serious";
-        }
-
-        ((MultiSpriteNode) ((SingleSpriteNode) dude.holiSprite.get("head")).get("mouth")).setCurrent(current);
+        dude.doFaceExpressionCalculations();
 
         energyBar.setValue(GameState.getEnergy());
         happinessBar.setValue(GameState.getHappiness());
         hungerBar.setValue(GameState.getHunger());
         healthBar.setValue(GameState.getHealth());
-
-
 
         if (looped1SecTime >= 1) {
             looped1SecTime -= 1;
@@ -212,13 +217,15 @@ public class MainScreen implements Screen {
     }
 
     private void draw() {
-        ScreenUtils.clear(new Color(.2f, .2f, .2f, 1f));
+        ScreenUtils.clear(new Color(.153f, .153f, .153f, 1f));
 //        ScreenUtils.clear(Color.BLACK);
         viewport.apply();
         spriteBatch.setProjectionMatrix(viewport.getCamera().combined);
         shapeRenderer.setProjectionMatrix(viewport.getCamera().combined);
         spriteBatch.begin();
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        background.draw(spriteBatch);
 
         dude.render(spriteBatch);
 

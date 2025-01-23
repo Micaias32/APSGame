@@ -12,12 +12,16 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+import static ifpb.game.GameState.getEnergy;
+import static ifpb.game.GameState.isLightOn;
+
 
 public class Dude {
     public static final float scaleFactor = .5f;
     public static final Color MAIN_COLOR = Color.valueOf("0fdcdf");
     final SingleSpriteNode holiSprite;
     final SingleSpriteNode eyes, body, head;
+    final MultiSpriteNode mouth;
     float transitionTime = 0, transitionDuration = 4;
     private Color startColor, endColor, current;
     private float timeBlinking;
@@ -36,7 +40,7 @@ public class Dude {
         holiSprite = new SingleSpriteNode(
             new Sprite(
                 new TextureRegion(
-                    new Texture("food/lubi.png"),
+                    new Texture("character/holi_main.png"),
                     0,
                     0,
                     0,
@@ -49,23 +53,26 @@ public class Dude {
         holiSprite.addChild("body", this.body);
         holiSprite.addChild("head", this.head);
 
-        Sprite mouthHappy, mouthSerious, eyes, pupils;
+        Sprite mouthHappy, mouthSerious, eyes, eyelash, pupils;
 
         mouthHappy = new Sprite(new Texture("character/mouth.png"));
         mouthSerious = new Sprite(new Texture("character/mouth_neutral.png"));
 
         eyes = new Sprite(new Texture("character/eyes.png"));
+        eyelash = new Sprite(new Texture("character/nocolor/eyelash.png"));
         pupils = new Sprite(new Texture("character/pupils.png"));
 
         SingleSpriteNode headNode = (SingleSpriteNode) holiSprite.get("head");
         this.eyes = new SingleSpriteNode(eyes);
         headNode.addChild("eyes", this.eyes);
 
+        headNode.addChild("eyelash", new SingleSpriteNode(eyelash));
+
         HashMap<String, ISpriteLeaf> options = new HashMap<>();
         options.put("happy", new SingleSpriteNode(mouthHappy));
         options.put("serious", new SingleSpriteNode(mouthSerious));
-        MultiSpriteNode mouthNode = new MultiSpriteNode(options, "happy");
-        headNode.addChild("mouth", mouthNode);
+        this.mouth = new MultiSpriteNode(options, "happy");
+        headNode.addChild("mouth", this.mouth);
 
         SingleSpriteNode eyesNode = (SingleSpriteNode) headNode.get("eyes");
         eyesNode.addChild("pupils", new SingleSpriteNode(pupils));
@@ -126,6 +133,7 @@ public class Dude {
         Consumer<Sprite> consumer = sprite -> sprite.setColor(color);
         head.doToThis(consumer);
         body.doToThis(consumer);
+        head.get("eyelash").doToThis(consumer);
     }
 
     private void updateColorTransition(float delta) {
@@ -158,6 +166,30 @@ public class Dude {
 
     public Rectangle getBoundingBox() {
         return ((SingleSpriteNode) holiSprite.get("head")).getSprite().getBoundingRectangle();
+    }
+
+    public void doFaceExpressionCalculations() {
+        boolean isTired = getEnergy() < .3f && !GameState.sleeping;
+
+        if (GameState.sleeping) {
+            head.disable("eyes");
+        } else {
+            head.enable("eyes");
+        }
+        if (isTired) {
+            head.enable("eyelash");
+        } else {
+            head.disable("eyelash");
+        }
+
+        String current;
+        if (isLightOn && !isTired) {
+            current = "happy";
+        } else {
+            current = "serious";
+        }
+
+        mouth.setCurrent(current);
     }
 }
 // PRIMARY KEY AUTOINCREMENT
