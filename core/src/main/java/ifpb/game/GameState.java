@@ -4,7 +4,6 @@ package ifpb.game;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Writer;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.HashMap;
@@ -119,6 +118,26 @@ public class GameState {
         }
     }
 
+    public static void incrementTime() {
+        timeSinceUpdate += 1;
+        System.out.println(timeSinceUpdate);
+    }
+
     public static void updateTime() {
+        while (timeSinceUpdate >= 60) {
+            if (sleeping) {
+                energy += .1f;
+            }
+            if (energy == 1) {
+                sleeping = false;
+            }
+            if (energy == 0) {
+                health -= .1f;
+            }
+            hunger -= .05f;
+            happiness -= .01f;
+
+            timeSinceUpdate -= 60;
+        }
     }
 }

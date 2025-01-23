@@ -40,22 +40,24 @@ public class Lamp {
             )
         );
 
-        lamp.addChild("state", new MultiSingleSpriteNode(lamp, sprites, "on"));
-        isOn = true;
+        lamp.addChild("state", new MultiSpriteNode(sprites, GameState.isLightOn ? "on" : "off"));
+        isOn = GameState.isLightOn;
         lamp.doToAll(sprite -> sprite.setPosition(x, y));
         lamp.doToAll(sprite -> sprite.setScale(scale));
     }
 
     public void render(SpriteBatch spriteBatch) {
         lamp.renderAll(spriteBatch);
-        if (((MultiSingleSpriteNode) lamp.get("state")).getCurrent().equals("off")) {
+        if (((MultiSpriteNode) lamp.get("state")).getCurrent().equals("off")) {
             dim.draw(spriteBatch);
         }
     }
 
     public void switchState() {
-        ((MultiSingleSpriteNode) lamp.get("state")).setCurrent(isOn ? "off" : "on");
+        ((MultiSpriteNode) lamp.get("state")).setCurrent(isOn ? "off" : "on");
         isOn = !isOn;
+        GameState.isLightOn = false;
+        GameState.sleeping = GameState.getEnergy() < .9f;
     }
 
     public boolean isOn() {

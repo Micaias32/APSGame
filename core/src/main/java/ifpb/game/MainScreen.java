@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 
 import static ifpb.game.FoodBar.FOOD_BOUNDS;
 import static ifpb.game.GameState.holdingState;
+import static ifpb.game.GameState.updateTime;
 
 /**
  * First screen of the application. Displayed after the application is created.
@@ -21,13 +22,13 @@ import static ifpb.game.GameState.holdingState;
 public class MainScreen implements Screen {
     public static final float WORLD_WIDTH = 160;
     public static final float WORLD_HEIGHT = 90;
-    long timeFromBeginning;
 
     FitViewport viewport;
     SpriteBatch spriteBatch;
     ShapeRenderer shapeRenderer;
 
-    float d;
+    float timeSincePlaying;
+    float looped1SecTime;
     Dude dude;
     Bar energyBar;
     Bar hungerBar;
@@ -36,13 +37,11 @@ public class MainScreen implements Screen {
     FoodBar foodBar;
     Sprite heldFood;
     Lamp lamp;
-    boolean sleeping = false;
     Vector2 dragPos, endPos;
 
     @Override
     public void show() {
         // Prepare your screen here.
-        timeFromBeginning = 0;
 
         viewport = new FitViewport(WORLD_WIDTH, WORLD_HEIGHT);
         spriteBatch = new SpriteBatch();
@@ -123,7 +122,7 @@ public class MainScreen implements Screen {
             }
         }
 
-        if (sleeping)
+        if (GameState.sleeping)
             return;
 
         if (Gdx.input.justTouched()) {
@@ -149,8 +148,6 @@ public class MainScreen implements Screen {
         if (holdingState == HoldingState.STOPPED_HOLDING || holdingState == HoldingState.STOPPED_HOLDING_FOOD) {
 
             holdingState = HoldingState.NOT_HOLDING;
-            System.out.printf("begin { x: %.2f, y: %.2f }\n", dragPos.x, dragPos.y);
-            System.out.printf("end   { x: %.2f, y: %.2f }\n\n", endPos.x, endPos.y);
         }
 
         if (Gdx.input.isKeyJustPressed(Input.Keys.SPACE)) {
@@ -172,22 +169,30 @@ public class MainScreen implements Screen {
     }
 
     private void logic(float delta) {
-        d += delta;
-        dude.doPhysics(d, delta);
+        timeSincePlaying += delta;
+        looped1SecTime += delta;
+        dude.doPhysics(timeSincePlaying, delta);
         handleFood();
 
-        if (!lamp.isOn()) {
+        if (GameState.sleeping) {
             ((SingleSpriteNode) dude.holiSprite.get("head")).disable("eyes");
-            sleeping = true;
         } else {
             ((SingleSpriteNode) dude.holiSprite.get("head")).enable("eyes");
-            sleeping = false;
         }
 
         energyBar.setValue(GameState.getEnergy());
         happinessBar.setValue(GameState.getHappiness());
         hungerBar.setValue(GameState.getHunger());
         healthBar.setValue(GameState.getHealth());
+
+
+
+        if (looped1SecTime >= 1) {
+            looped1SecTime -= 1;
+            GameState.incrementTime();
+        }
+
+        updateTime();
 
     }
 

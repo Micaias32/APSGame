@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-public class MultiSingleSpriteNode implements ISpriteLeaf {
+public class MultiSpriteNode implements ISpriteLeaf {
     private final HashMap<String, ISpriteLeaf> sprites;
     private String current;
 
-    public MultiSingleSpriteNode(SingleSpriteNode parent, HashMap<String, ISpriteLeaf> sprites, String current) {
+    public MultiSpriteNode(HashMap<String, ISpriteLeaf> sprites, String current) {
         this.sprites = sprites;
         this.current = current;
     }
