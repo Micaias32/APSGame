@@ -5,6 +5,9 @@ import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import ifpb.game.GameState;
 import ifpb.game.Main;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+
 /**
  * Launches the desktop (LWJGL3) application.
  */
@@ -15,7 +18,17 @@ public class Lwjgl3Launcher {
     }
 
     private static Lwjgl3Application createApplication(String path) {
-        GameState.statePath = path;
+        String pathJar = Lwjgl3Launcher.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        String decodedPath;
+        try {
+            decodedPath = URLDecoder.decode(pathJar, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
+
+        System.out.println(decodedPath);
+
+        GameState.statePath = decodedPath.concat(path);
         return new Lwjgl3Application(new Main(), getDefaultConfiguration());
     }
 
