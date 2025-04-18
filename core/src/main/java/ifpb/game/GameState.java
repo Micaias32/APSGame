@@ -11,6 +11,7 @@ import java.util.HashMap;
 public class GameState {
 
     public static String statePath;
+    public static boolean noState = true;
     public static long timeSinceUpdate = 0;
     public static boolean isLightOn = true, sleeping = false;
     public static HoldingState holdingState;

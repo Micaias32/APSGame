@@ -1,3 +1,4 @@
+
 project(":lwjgl3") {
   apply plugin: "org.graalvm.buildtools.native"
 
@@ -31,7 +32,7 @@ project(":lwjgl3") {
     def resFile = new File(resFolder, "resource-config.json")
     resFile.delete()
     resFile.append(
-      """{
+            """{
   "resources":{
   "includes":[
     {
@@ -43,7 +44,7 @@ project(":lwjgl3") {
     }
     // We also match all of the window icon images this way and the font files that are part of libGDX.
     resFile.append(
-      """libgdx.+\\\\.png|lsans.+)"
+            """libgdx.+\\\\.png|lsans.+)"
     }
   ]},
   "bundles":[]

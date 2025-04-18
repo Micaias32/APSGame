@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -136,7 +135,6 @@ public class LoadingScreen extends InputAdapter implements Screen {
 
         }
 
-        @NotNull
         private HashMap<String, String> getStringStringHashMap() {
             File file = new File(path);
             try {
@@ -154,7 +152,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
 
             HashMap<String, String> things = new HashMap<>();
 
-            do {
+            while (scanner.hasNextLine()) {
                 String[] text = scanner.nextLine().split(",");
                 if (text[0].isEmpty()) {
                     continue;
@@ -163,7 +161,7 @@ public class LoadingScreen extends InputAdapter implements Screen {
 
                 things.put(key, value);
 
-            } while (scanner.hasNextLine());
+            }
 
             scanner.close();
             return things;

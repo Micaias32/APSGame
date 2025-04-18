@@ -7,7 +7,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.Rectangle;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -114,7 +113,7 @@ public class Dude {
         eyes.doToAll(sprite1 -> sprite1.setRegion(x, y, width, height));
     }
 
-    public void render(@NotNull SpriteBatch spriteBatch) {
+    public void render(SpriteBatch spriteBatch) {
         holiSprite.renderChildren(spriteBatch);
     }
 
@@ -156,7 +155,7 @@ public class Dude {
         applyColor(current);
     }
 
-    public void consumeFood(@NotNull Food food) {
+    public void consumeFood(Food food) {
         GameState.setEnergy(GameState.getEnergy() + food.energyLevel);
         GameState.setHappiness(GameState.getHappiness() + food.happinessLevel);
         GameState.setHunger(GameState.getHunger() + food.hungerLevel);

@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.utils.Disposable;
-import org.jetbrains.annotations.NotNull;
 
 public class Bar implements Disposable {
     Rectangle outer, inner;
@@ -44,7 +43,7 @@ public class Bar implements Disposable {
         }
     }
 
-    public void render(@NotNull ShapeRenderer shapeRenderer, @NotNull SpriteBatch spriteBatch) {
+    public void render(ShapeRenderer shapeRenderer, SpriteBatch spriteBatch) {
         icon.render(spriteBatch);
         shapeRenderer.rect(outer.x, outer.y, outer.width, outer.height,
             bgColor, bgColor, bgColor, bgColor);
@@ -123,7 +122,7 @@ class BarIcon implements Disposable {
     Sprite bg;
     Sprite fg;
 
-    public BarIcon(@NotNull Sprite fg, float x, float y, float width, float height) {
+    public BarIcon(Sprite fg, float x, float y, float width, float height) {
         this.bg = new Sprite(new Texture(Gdx.files.internal("mainScreen/bgButton2.png")));
         bg.setPosition(x, y);
         bg.setSize(width, height);
